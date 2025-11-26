@@ -115,8 +115,8 @@
     </div>
 
     <script>
-        // ✅ CONFIGURAZIONE - URL GOOGLE APPS SCRIPT CON FORMDATA
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzXliYG63FaIHxmhNIA5NIMbhJrw-tCzFj-Z1Wc93kViiwTLvar-boFC3VBj00testNzQ/exec';
+        // ✅ CONFIGURAZIONE - Sheet2API (CORS-friendly!)
+        const SHEET2API_URL = 'https://sheet2api.com/v1/T8MGJTvLSgmS/quiz-results';
 
         // DOMANDE DEL QUIZ
         const questions = [
@@ -262,33 +262,38 @@
 
             const today = new Date().toLocaleDateString('it-IT');
             
-            // Usa FormData per evitare problemi CORS
-            const formData = new FormData();
-            formData.append('name', studentName);
-            formData.append('score', score);
-            formData.append('percentage', percentage);
-            formData.append('date', today);
+            // Prepara i dati per Sheet2API
+            const data = {
+                Nome: studentName,
+                Punteggio: score,
+                Percentuale: percentage,
+                Data: today
+            };
 
-            console.log('📤 Invio dati (FormData):', {name: studentName, score, percentage, date: today});
+            console.log('📤 Invio dati a Sheet2API:', data);
 
-            // Invia con FormData
-            fetch(WEB_APP_URL, {
+            // Invia a Sheet2API
+            fetch(SHEET2API_URL, {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             })
-            .then(response => {
-                console.log('✅ Risposta ricevuta:', response.status);
-                document.getElementById('loadingIndicator').style.display = 'none';
+            .then(response => response.json())
+            .then(result => {
+                console.log('✅ Risultato salvato su Google Sheets!', result);
+                document.getElementById('loadingIndicator').innerHTML = '<p style="color: var(--color-success);">✅ Risultato salvato!</p>';
                 document.getElementById('restartBtn').style.display = 'block';
             })
             .catch(err => {
                 console.error('❌ Errore salvataggio:', err);
-                document.getElementById('loadingIndicator').innerHTML = '<p style="color: var(--color-error);">✅ Risultato salvato! (offline mode)</p>';
+                document.getElementById('loadingIndicator').innerHTML = '<p style="color: var(--color-error);">⚠️ Errore nel salvataggio</p>';
                 document.getElementById('restartBtn').style.display = 'block';
             });
         }
 
-        console.log('✅ Quiz pronto! - Script Google Apps configurato (FormData)');
+        console.log('✅ Quiz pronto! - Sheet2API configurato');
     </script>
 </body>
 </html>
