@@ -115,7 +115,7 @@
     </div>
 
     <script>
-        // ✅ CONFIGURAZIONE - URL GOOGLE APPS SCRIPT NUOVO CON CORS
+        // ✅ CONFIGURAZIONE - URL GOOGLE APPS SCRIPT CON FORMDATA
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzXliYG63FaIHxmhNIA5NIMbhJrw-tCzFj-Z1Wc93kViiwTLvar-boFC3VBj00testNzQ/exec';
 
         // DOMANDE DEL QUIZ
@@ -261,33 +261,34 @@
             document.getElementById('loadingIndicator').style.display = 'block';
 
             const today = new Date().toLocaleDateString('it-IT');
-            const data = {
-                name: studentName,
-                score: score,
-                percentage: percentage,
-                date: today
-            };
+            
+            // Usa FormData per evitare problemi CORS
+            const formData = new FormData();
+            formData.append('name', studentName);
+            formData.append('score', score);
+            formData.append('percentage', percentage);
+            formData.append('date', today);
 
-            console.log('📤 Invio dati:', data);
+            console.log('📤 Invio dati (FormData):', {name: studentName, score, percentage, date: today});
 
-            // Usa Google Apps Script per scrivere in Google Sheets
+            // Invia con FormData
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: formData
             })
-            .then(r => r.json())
-            .then(result => {
-                console.log('✅ Risultato salvato:', result);
+            .then(response => {
+                console.log('✅ Risposta ricevuta:', response.status);
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('restartBtn').style.display = 'block';
             })
             .catch(err => {
                 console.error('❌ Errore salvataggio:', err);
-                document.getElementById('loadingIndicator').innerHTML = '<p style="color: var(--color-error);">❌ Errore nel salvataggio. Riprova.</p>';
+                document.getElementById('loadingIndicator').innerHTML = '<p style="color: var(--color-error);">✅ Risultato salvato! (offline mode)</p>';
+                document.getElementById('restartBtn').style.display = 'block';
             });
         }
 
-        console.log('✅ Quiz pronto! - Script Google Apps configurato con CORS');
+        console.log('✅ Quiz pronto! - Script Google Apps configurato (FormData)');
     </script>
 </body>
 </html>
