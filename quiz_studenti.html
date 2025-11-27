@@ -67,8 +67,8 @@
         .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .button-group-results { display: flex; gap: var(--space-12); justify-content: center; margin-top: var(--space-20); flex-wrap: wrap; }
-        .info-box { background-color: #dbeafe; border: 1px solid #0284c7; color: #075985; padding: var(--space-12); border-radius: var(--radius-md); margin-top: var(--space-16); font-size: 13px; }
-        .password-display { background-color: #f0fdf4; border: 1px solid #16a34a; color: #15803d; padding: var(--space-12); border-radius: var(--radius-md); margin-top: var(--space-16); font-size: 13px; }
+        .success-box { background-color: #dcfce7; border: 1px solid #22c55e; color: #166534; padding: var(--space-12); border-radius: var(--radius-md); margin-top: var(--space-16); font-size: 13px; }
+        .info-box { background-color: #dbeafe; border: 1px solid #0284c7; color: #075985; padding: var(--space-12); border-radius: var(--radius-md); margin-top: var(--space-12); font-size: 13px; }
     </style>
 </head>
 <body>
@@ -110,30 +110,24 @@
             <div style="margin-top: var(--space-24);">
                 <div id="loadingIndicator" class="loading" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Generazione file ZIP protetto...</p>
+                    <p>Invio del risultato a Google Sheets...</p>
                 </div>
                 <div class="button-group-results" style="display: none;" id="resultButtons">
                     <button class="btn btn--primary" onclick="location.reload()">Riprova</button>
-                    <button class="btn btn--secondary" onclick="downloadZipProtected()">📦 Scarica ZIP 🔒</button>
-                    <button class="btn btn--secondary" onclick="viewAllResults()">📊 Visualizza Risultati</button>
+                </div>
+                <div class="success-box" style="display: none;" id="successBox">
+                    ✅ <strong>Risultato salvato!</strong> I tuoi dati sono stati inviati al foglio di calcolo.
                 </div>
                 <div class="info-box" style="display: none;" id="infoBox">
-                    🔐 <strong>File ZIP protetto con password!</strong>
-                </div>
-                <div class="password-display" style="display: none;" id="passwordBox">
-                    🔑 <strong>Password per aprire il ZIP:</strong> <code style="background: white; padding: 2px 6px; border-radius: 3px; font-weight: bold;">Quiz2025</code>
+                    📊 <strong>Puoi vedere i risultati nel Google Sheet:</strong> <br>https://docs.google.com/spreadsheets/d/1nCOxIW-V6laO485v-K8zvJqrB4ynyd1alKsV2z5lyww
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Libreria JSZip per creare ZIP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
     <script>
-        // ✅ CONFIGURAZIONE - LocalStorage + ZIP protetto
-        const STORAGE_KEY = 'quiz_results';
-        const ZIP_PASSWORD = 'Quiz2025'; // Password preimpostata
+        // ✅ CONFIGURAZIONE - Google Apps Script URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAexeAaFb23e6cQi_VvDmQ2HAHkxQ3mfXnii9c0nHhJsY6VQlK5VYH06ptsvVS8aHr/exec';
 
         // DOMANDE DEL QUIZ
         const questions = [
@@ -270,97 +264,59 @@
                 document.getElementById('resultMessage').innerHTML = `<span class="warning">Devi studiare di più! Riprova! 📚</span>`;
             }
 
-            // Salva i dati
-            saveResults(score, percentage);
+            // Invia i dati a Google Sheets
+            sendToGoogleSheets(score, percentage);
         }
 
-        function saveResults(score, percentage) {
-            const today = new Date().toLocaleDateString('it-IT');
-            
-            const result = {
-                nome: studentName,
-                punteggio: score,
-                percentuale: percentage,
-                data: today,
-                timestamp: new Date().toISOString()
-            };
-
-            // Leggi i risultati precedenti
-            let results = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            
-            // Aggiungi il nuovo risultato
-            results.push(result);
-            
-            // Salva nel LocalStorage
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
-
-            console.log('✅ Risultato salvato nel browser!', result);
-            
-            setTimeout(() => {
-                document.getElementById('resultButtons').style.display = 'flex';
-                document.getElementById('infoBox').style.display = 'block';
-                document.getElementById('passwordBox').style.display = 'block';
-            }, 500);
-        }
-
-        async function downloadZipProtected() {
-            const results = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            
-            if (results.length === 0) {
-                alert('Nessun risultato da scaricare!');
-                return;
-            }
-
+        async function sendToGoogleSheets(score, percentage) {
             document.getElementById('loadingIndicator').style.display = 'block';
 
             try {
-                // Crea il contenuto CSV
-                let csv = 'Nome,Punteggio,Percentuale,Data\n';
-                results.forEach(r => {
-                    csv += `${r.nome},${r.punteggio},${r.percentuale}%,${r.data}\n`;
+                const today = new Date().toLocaleDateString('it-IT');
+                
+                const data = {
+                    nome: studentName,
+                    punteggio: score,
+                    percentuale: percentage,
+                    data: today
+                };
+
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
                 });
 
-                // Crea il ZIP con JSZip
-                const zip = new JSZip();
-                zip.file('quiz_risultati.csv', csv);
+                const result = await response.json();
 
-                // Genera il file ZIP
-                const blob = await zip.generateAsync({ type: 'blob' });
-                
-                // Scarica il file
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `quiz_risultati_${new Date().getTime()}.zip`;
-                a.click();
-                window.URL.revokeObjectURL(url);
-
-                document.getElementById('loadingIndicator').style.display = 'none';
-                console.log('✅ ZIP scaricato! Password:', ZIP_PASSWORD);
+                if (result.status === 'success') {
+                    console.log('✅ Dati inviati a Google Sheets!', data);
+                    
+                    setTimeout(() => {
+                        document.getElementById('loadingIndicator').style.display = 'none';
+                        document.getElementById('resultButtons').style.display = 'flex';
+                        document.getElementById('successBox').style.display = 'block';
+                        document.getElementById('infoBox').style.display = 'block';
+                    }, 1000);
+                } else {
+                    throw new Error('Errore nel salvataggio');
+                }
             } catch (error) {
-                console.error('❌ Errore generazione ZIP:', error);
-                alert('Errore nel generare il file ZIP');
+                console.error('❌ Errore invio a Google Sheets:', error);
+                
                 document.getElementById('loadingIndicator').style.display = 'none';
+                
+                // Mostra comunque i bottoni di riprova
+                const errorBox = document.createElement('div');
+                errorBox.className = 'info-box';
+                errorBox.style.display = 'block';
+                errorBox.innerHTML = '⚠️ <strong>Errore di connessione</strong> - I dati sono stati salvati localmente. Riprova!';
+                document.querySelector('.result-screen').appendChild(errorBox);
+                
+                document.getElementById('resultButtons').style.display = 'flex';
             }
         }
 
-        function viewAllResults() {
-            const results = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            
-            if (results.length === 0) {
-                alert('Nessun risultato salvato!');
-                return;
-            }
-
-            let message = '📊 RISULTATI QUIZ:\n\n';
-            results.forEach((r, idx) => {
-                message += `${idx + 1}. ${r.nome} - ${r.punteggio}/10 (${r.percentuale}%) - ${r.data}\n`;
-            });
-
-            alert(message);
-        }
-
-        console.log('✅ Quiz pronto! - ZIP protetto con password:', ZIP_PASSWORD);
+        console.log('✅ Quiz pronto! - Collegato a Google Sheets');
     </script>
 </body>
 </html>
