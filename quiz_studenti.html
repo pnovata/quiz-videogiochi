@@ -126,10 +126,8 @@
     </div>
 
     <script>
-        // ✅ CONFIGURAZIONE - Google Apps Script URL
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAexeAaFb23e6cQi_VvDmQ2HAHkxQ3mfXnii9c0nHhJsY6VQlK5VYH06ptsvVS8aHr/exec';
 
-        // DOMANDE DEL QUIZ
         const questions = [
             {
                 question: "Qual è il miglior gioco di ruolo di sempre?",
@@ -183,12 +181,10 @@
             }
         ];
 
-        // VARIABILI GLOBALI
         let currentQuestion = 0;
         let answers = new Array(questions.length).fill(null);
         let studentName = '';
 
-        // FUNZIONI
         function startQuiz() {
             studentName = document.getElementById('nameInput').value.trim();
             if (!studentName) {
@@ -224,7 +220,6 @@
             html += `</div></div>`;
             document.getElementById('questionContainer').innerHTML = html;
 
-            // Aggiorna bottoni
             document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
             document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Fine Quiz ✓' : 'Avanti →';
             document.getElementById('nextBtn').onclick = currentQuestion === questions.length - 1 ? finishQuiz : nextQuestion;
@@ -264,7 +259,6 @@
                 document.getElementById('resultMessage').innerHTML = `<span class="warning">Devi studiare di più! Riprova! 📚</span>`;
             }
 
-            // Invia i dati a Google Sheets
             sendToGoogleSheets(score, percentage);
         }
 
@@ -305,18 +299,7 @@
                 
                 document.getElementById('loadingIndicator').style.display = 'none';
                 
-                // Mostra comunque i bottoni di riprova
                 const errorBox = document.createElement('div');
                 errorBox.className = 'info-box';
                 errorBox.style.display = 'block';
-                errorBox.innerHTML = '⚠️ <strong>Errore di connessione</strong> - I dati sono stati salvati localmente. Riprova!';
-                document.querySelector('.result-screen').appendChild(errorBox);
-                
-                document.getElementById('resultButtons').style.display = 'flex';
-            }
-        }
-
-        console.log('✅ Quiz pronto! - Collegato a Google Sheets');
-    </script>
-</body>
-</html>
+                errorBox.innerHTML = '⚠️ <strong>Errore di connessione</strong> - I dati sono stati salvati loc
