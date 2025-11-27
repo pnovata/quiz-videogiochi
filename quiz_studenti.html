@@ -67,8 +67,9 @@
         .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .button-group-results { display: flex; gap: var(--space-12); justify-content: center; margin-top: var(--space-20); flex-wrap: wrap; }
+        .info-box { background-color: #e0f2fe; border: 1px solid #0284c7; color: #075985; padding: var(--space-12); border-radius: var(--radius-md); margin-top: var(--space-16); font-size: 13px; }
     </style>
-<script type="text/javascript" nonce="26b5992741b941f68a1db6c6bd3" src="//injections.adguard.org?ts=1764257605926&amp;type=content-script&amp;dmn=ppl-ai-code-interpreter-files.s3.amazonaws.com&amp;url=https%3A%2F%2Fppl-ai-code-interpreter-files.s3.amazonaws.com%2Fweb%2Fdirect-files%2F556ed5b0ca1a2be022b9957d0aef671c%2Faef52d18-6a85-49b8-9fe7-fa8a096c4eae%2F1722e241.html%3Fresponse-content-disposition%3Dattachment%253B%2520filename%253Dquiz_LOCALSTORAGE.html%253B%2520filename%252A%253DUTF-8%2527%2527quiz_LOCALSTORAGE.html%26AWSAccessKeyId%3DASIA2F3EMEYE3IDGXYVJ%26Signature%3Dx8pixEqeO5EQTrrZDAkLgiFoFYg%253D%26x-amz-security-token%3DIQoJb3JpZ2luX2VjENj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMSJHMEUCIQC3P%252BJeozzIqann4gFe38HoJZDhzcUOi2%252Bti%252BW51krZOgIgUrrs0iiqEg6uSH4to342l%252FnNPx%252FQ6lnLyOr%252Fg%252BlP5x8q%252FAQIoP%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARABGgw2OTk3NTMzMDk3MDUiDEeheBH9jiXJ6HevsCrQBIDfpPjOdaXbc3zGmKIPUhgcCumupPrqBxPCdDV0x9NtpKakOL1ERyGwrNsQoNj4yN%252F7nHhq0Ndsf9HPm4HtEcz9UXCZ3O0n4xoX9vpTSEzdjJpokylSMOBL%252BM57FQKosJxKMN93hTArEAdmi6RvlXVX6mg7%252Fr2zLh0K16YJErJ%252BwGcsHgB2s7rVhZxM3ZqNCVhWKAPXBLp4sj48BDLHis3KMoA3GchR7nmrKASWEJh9Oexx%252BG7K2fEKqRniEOyqqgsY4lQVmHyS%252FqFz9If5xeHa33blioup4JMPVJrl2D5N6wWjozfWR9ZdKKYgUhgpr3p70zKW%252B1MgHIMf6yijZyU1dN3zOV4h%252FXsXtzAkrokI5KyFR%252F3%252FaWRvShpY7gtJE7Fw9HHVXYKsM9NzMm2Yd8r3Or3g1k%252BHDb9e6lvtVB2mRjwfo0ZjuV2zkHYrZMrIpHirlSCj9Cq%252BTmE0jUf7oiecpVjwUazuapa1vPutCrN8arhrQ0Tzt4mDvBDEy9GzuvdPxWGxKcgbsd2eiBqPcNrQxcPspMOImsfa%252BT4b5TORcF%252BvycaLDwHm%252FuowktDQgMpJvvuX7piQn6kUHY9qaUtqsPw3iV%252FGuub10ESt9%252BLxnc2%252BmAdih7IL7%252BPgynIfGRJ7juplXv8rS3P4Hjr8dj2AYzvVoC2iM5yzsBj0%252BKAIJTzRAsCbWxP3ggjH2mx5J4ezdnazYujSsNTjRM5ds%252BNsUMdwE2ONrShoKpBpo6uEZzSPUS6U4xnEwCFoKa0hH89kpYb%252B8QIniRtkeaD5vd4wh9ahyQY6mAGgwVh%252F0%252BtHVtK4QAmb%252FUnQ%252BBB01zCdRAj1PmYk%252BJpfEY7X9Up5%252FAtWMP9P4PBi%252Fe6P6IG6mrD40NOKTqm3pp1oUkpHqO3RB4NrzLZQzb%252BLPyhHIFU2L7%252B8dwpiF9Gw8crvRdw%252BDMKVtjiHXb4cGknDMaZJhQ77F5eQCY%252FGcgz%252Bs0iOszy1cn8NomV%252BnVPTQQnji6%252FlXpb75A%253D%253D%26Expires%3D1764258523&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="26b5992741b941f68a1db6c6bd3" src="//injections.adguard.org?ts=1764257605926&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
     <div class="container">
         <div class="header">
@@ -112,16 +113,23 @@
                 </div>
                 <div class="button-group-results" style="display: none;" id="resultButtons">
                     <button class="btn btn--primary" onclick="location.reload()">Riprova</button>
-                    <button class="btn btn--secondary" onclick="downloadCSV()">📥 Scarica CSV</button>
+                    <button class="btn btn--secondary" onclick="downloadExcelProtected()">📥 Scarica Excel 🔒</button>
                     <button class="btn btn--secondary" onclick="viewAllResults()">📊 Visualizza Risultati</button>
+                </div>
+                <div class="info-box" style="display: none;" id="infoBox">
+                    🔒 <strong>File protetto:</strong> Password: <code style="background: white; padding: 2px 6px; border-radius: 3px;">Quiz2025</code>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Libreria per generare Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script>
         // ✅ CONFIGURAZIONE - LocalStorage (niente server needed!)
         const STORAGE_KEY = 'quiz_results';
+        const EXCEL_PASSWORD = 'Quiz2025'; // Password preimpostata
 
         // DOMANDE DEL QUIZ
         const questions = [
@@ -289,10 +297,11 @@
             setTimeout(() => {
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('resultButtons').style.display = 'flex';
+                document.getElementById('infoBox').style.display = 'block';
             }, 1000);
         }
 
-        function downloadCSV() {
+        function downloadExcelProtected() {
             const results = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             
             if (results.length === 0) {
@@ -300,22 +309,39 @@
                 return;
             }
 
-            // Crea header CSV
-            let csv = 'Nome,Punteggio,Percentuale,Data\n';
-            
-            // Aggiungi righe
-            results.forEach(r => {
-                csv += `${r.nome},${r.punteggio},${r.percentuale}%,${r.data}\n`;
-            });
+            // Crea i dati per Excel
+            const data = [
+                ['Nome', 'Punteggio', 'Percentuale', 'Data'],
+                ...results.map(r => [r.nome, r.punteggio, r.percentuale + '%', r.data])
+            ];
+
+            // Crea il workbook
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Risultati');
+
+            // Formattazione
+            ws['!cols'] = [
+                { wch: 20 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 15 }
+            ];
+
+            // Proteggi il foglio con password
+            ws['!protect'] = {
+                sheet: true,
+                content: true,
+                scenarios: true,
+                password: EXCEL_PASSWORD,
+                objects: true,
+                selectLocked: true
+            };
 
             // Scarica il file
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `quiz_risultati_${new Date().getTime()}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            XLSX.writeFile(wb, `quiz_risultati_${new Date().getTime()}.xlsx`);
+            
+            console.log('✅ Excel protetto scaricato! Password:', EXCEL_PASSWORD);
         }
 
         function viewAllResults() {
@@ -334,7 +360,7 @@
             alert(message);
         }
 
-        console.log('✅ Quiz pronto! - LocalStorage configurato (niente server!)');
+        console.log('✅ Quiz pronto! - Excel protetto con password:', EXCEL_PASSWORD);
     </script>
 </body>
 </html>
